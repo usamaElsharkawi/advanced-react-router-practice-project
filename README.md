@@ -237,6 +237,18 @@ Instead of meticulously parsing JSON inside every `loader()`, React Router deepl
 
 If we return the raw fetch promise (`return response;`), React Router automatically intercepts it, calls `.json()` on that object under the hood, awaits the second parsing promise, and hands the final JavaScript Object directly to `useLoaderData()`.
 
+### 🛑 Error Handling Boundaries & Custom Responses
+1. **The Architecture:** If a `loader` fails, React Router stops rendering the matched component and crawls **up** your routing tree until it finds the nearest `errorElement` to render instead. 
+2. **Throwing Errors:** Inside loaders, we use the `throw` keyword to intentionally break out of normal execution.
+3. **The Web API Response:** Modern React Router (v6.20+ & v7) deprecated `json()` in favor of enforcing Web Standards. To throw robust error data, we construct a native Web API `Response` object:
+   ```javascript
+   throw new Response(
+     JSON.stringify({ message: "Could not fetch events." }), 
+     { status: 500, headers: { "Content-Type": "application/json" } }
+   );
+   ```
+4. **Extracting Errors (`useRouteError`):** Inside the component mapped to `errorElement`, we use the `useRouteError()` hook to intercept whatever was thrown. Because we threw a `Response`, React Router automatically parses it and hands us an `error` object where we can directly read `error.status` (500) and `error.data.message` ("Could not fetch...").
+
 ---
 
 ## 🚀 How to Run This Project
