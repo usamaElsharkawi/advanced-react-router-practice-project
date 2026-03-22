@@ -29,6 +29,18 @@ import EventsLayout from "./pages/EventsLayout";
 // 7. Output the ID of the selected event on the EventDetailPage
 // BONUS: Add another (nested) layout route that adds the <EventNavigation> component above all /events... page components
 
+async function  eventsLoader() {
+  const response = await fetch('http://localhost:8080/events');
+
+      if (!response.ok) {
+        //...
+      } else {
+        const resData = await response.json();
+        return resData.events;
+      }
+}
+  
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -39,7 +51,7 @@ const router = createBrowserRouter([
         path: "events",
         element: <EventsLayout />,
         children: [
-          { index: true, element: <EventsPage /> },
+          { index: true, element: <EventsPage />,  loader:eventsLoader},
           { path: "new", element: <NewEventPage /> },
           { path: ":eventId", element: <EventDetailPage /> },
           { path: ":eventId/edit", element: <EditEventPage /> },
