@@ -255,6 +255,29 @@ If we return the raw fetch promise (`return response;`), React Router automatica
 3. **The Extraction:** Instead of using the local `useLoaderData()` hook (which only checks the exact current route and would return `undefined`), the child components use `useRouteLoaderData("event-detail")`.
 4. **The Benefit:** React Router looks *UP* the DOM tree, finds the active parent layout, and instantly pulls its already-fetched data out of the internal memory cache. Zero redundant network requests!
 
+### 📤 Data Mutations (The `action()` Paradigm)
+
+Just as `loader()` handles reading data, `action()` handles writing data (POST, PATCH, DELETE). This moves side effects out of components and into the route layer.
+
+#### 1. The `<Form>` Component
+- **Native Power:** React Router's `<Form>` (capital F) intercepts the browser's native form submission. It prevents a full page reload but still performs the submission.
+- **Automatic Package:** It automatically scrapes all input fields with a `name` attribute and packages them into a native Web API `FormData` object.
+- **The Execution:** It finds the `action` function attached to the current route and executes it, passing the `request` (containing the form data) and `params`.
+
+#### 2. The Critical `name` Attribute
+- In modern routing, the `name` attribute is the **Primary Key**.
+- Without a `name`, the native `FormData` API cannot "see" the input.
+- This eliminates the need for `useState` and `onChange` handlers for every individual input field, making UI components significantly thinner.
+
+#### 3. Programmatic Submission (`useSubmit`)
+- When you need to submit data via code logic (e.g., a delete button with a confirmation dialog), use the `useSubmit()` hook.
+- It triggers the same `action()` function as a `<Form>`, but gives the developer control over *when* and *what* to submit.
+
+#### 4. Automatic Revalidation (The "Fresh Data" Guarantee)
+- **The Magic:** Whenever an `action()` function finishes successfully, React Router assumes the database has changed. 
+- It **automatically re-triggers every active loader** on the page.
+- This ensures that if you add a new event or delete one, the UI instantly updates with the latest data from the server without you writing a single line of state-syncing code.
+
 ---
 
 ## 🚀 How to Run This Project
