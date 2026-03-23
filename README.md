@@ -249,6 +249,12 @@ If we return the raw fetch promise (`return response;`), React Router automatica
    ```
 4. **Extracting Errors (`useRouteError`):** Inside the component mapped to `errorElement`, we use the `useRouteError()` hook to intercept whatever was thrown. Because we threw a `Response`, React Router automatically parses it and hands us an `error` object where we can directly read `error.status` (500) and `error.data.message` ("Could not fetch...").
 
+### 🤝 Data Sharing Across Routes (`useRouteLoaderData`)
+1. **The Problem:** Two child components (like an `EventDetailPage` and an `EditEventPage`) both need the exact same data from the backend. If we give them both a direct `loader`, the app wastes bandwidth fetching the same data twice.
+2. **The Architecture (`App.js`):** We lift the `loader` up to a **Parent Route** (e.g., `path: ":eventId"`) and assign that specific parent route a unique `id` property (e.g., `id: "event-detail"`).
+3. **The Extraction:** Instead of using the local `useLoaderData()` hook (which only checks the exact current route and would return `undefined`), the child components use `useRouteLoaderData("event-detail")`.
+4. **The Benefit:** React Router looks *UP* the DOM tree, finds the active parent layout, and instantly pulls its already-fetched data out of the internal memory cache. Zero redundant network requests!
+
 ---
 
 ## 🚀 How to Run This Project
