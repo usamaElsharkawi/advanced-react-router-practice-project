@@ -328,3 +328,14 @@ To run this project locally on your machine and explore the React Router impleme
 5. Open your browser and visit `http://localhost:3000` to see the app in action!
 
 ---
+
+### 🚀 React Router v7 Architecture Updates (Modern Standards)
+If you are using **React Router v7** (check your `package.json`), the framework has become even more streamlined by enforcing pure Web standards:
+
+1. **`json()` is Gone:** You no longer need the `json()` helper. Instead, throw a native `Response` object with `JSON.stringify()`.
+2. **`defer()` is Gone:** You no longer need to wrap promises in `defer()`. 
+   - Simply return a **plain JavaScript object** containing your promise(s) from the `loader`. 
+   - React Router v7's **Single Fetch** engine automatically detects the promise and handles the streaming for you.
+3. **The `Await` Component:** `<Suspense>` and `<Await>` still work exactly the same way to resolve those background promises.
+
+---
