@@ -48,10 +48,14 @@ async function loadEvent(eventId) {
 
 export async function loader({ request, params }) {
   const eventId = params.eventId;
+
+  const eventPromise = loadEvent(eventId);
+  const eventsPromise = loadEvents();
+
   return {
-    event: await loadEvent(eventId),
-    events: loadEvents(),
-  }
+    event: await eventPromise,
+    events: eventsPromise,
+  };
 }
 
 export async function action({ request, params }) {
